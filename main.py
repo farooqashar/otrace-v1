@@ -1,11 +1,12 @@
 from fastapi import FastAPI
+from routers import introduction, attestation
 
-app = FastAPI()
+app = FastAPI(title="OTrace V1")
+
+# Include Routers
+app.include_router(introduction.router)
+app.include_router(attestation.router)
 
 @app.get("/")
-def read_root():
-    return {"message": "Hello, world!"}
-
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: str = None):
-    return {"item_id": item_id, "query": q}
+def home():
+    return {"message": "Welcome to OTrace V1 FastAPI Version!"}
