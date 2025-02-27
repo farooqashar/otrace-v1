@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from datetime import datetime
 from enum import Enum
-from typing import List, Set, Dict, Any
+from typing import List, Dict, Any
 
 class Action_Type(str, Enum):
     consent_offered = "consent offered"
@@ -22,7 +22,7 @@ class Party(BaseModel):
     data_controller: str  # e.g., {"consumer", "data_provider", "data_recipient"}
 
 class Attestation(BaseModel):
-    _id: int
+    id: int
     party: Party
     action: Action
     timestamp: datetime

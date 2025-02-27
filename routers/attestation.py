@@ -21,7 +21,7 @@ def attest(party_name: str, data_controller: str, action: Action):
     party_attestations_records = attestation_records[party_name]
 
     new_attestation = Attestation(
-        _id=uuid4(),
+        id=uuid4(),
         party=party_attestations_records.party,
         action=action,
         timestamp=datetime.now()
