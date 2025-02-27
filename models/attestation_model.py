@@ -1,3 +1,4 @@
+from uuid import UUID
 from pydantic import BaseModel
 from datetime import datetime
 from enum import Enum
@@ -22,7 +23,7 @@ class Party(BaseModel):
     data_controller: str  # e.g., {"consumer", "data_provider", "data_recipient"}
 
 class Attestation(BaseModel):
-    id: int
+    id: UUID
     party: Party
     action: Action
     timestamp: datetime
