@@ -15,7 +15,7 @@ def record_data_use(operator: Operator, data: Data, data_subject: DataSubject, o
     """
     data_use_id = uuid4()
     data_use = DataUse(
-        data_use_id=data_use_id,
+        id=data_use_id,
         operator=operator,
         data=data,
         data_subject=data_subject,
