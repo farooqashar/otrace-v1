@@ -1,7 +1,6 @@
 from pydantic import BaseModel
-from typing import List
+from typing import List, Literal
 from datetime import datetime
-from uuid import UUID
 from enum import Enum
 
 class ConsentState(str, Enum):
@@ -20,10 +19,10 @@ class Data(BaseModel):
     description: str
 
 class Operation(BaseModel):
-    operation_type: str
+    operation_type: Literal["read", "write"]
 
 class Consent(BaseModel):
-    id: UUID
+    id: str
     operator: Operator
     user: User
     data: Data

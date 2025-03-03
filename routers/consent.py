@@ -3,6 +3,7 @@ from typing import List
 from datetime import datetime
 from uuid import UUID, uuid4
 from models.consent_model import Consent, User, Operator, Data, Operation, ConsentState
+from firebase import db
 
 router = APIRouter(prefix="/consents", tags=["Consents"])
 
@@ -16,7 +17,7 @@ def offer_consent(expiry_timestamp: datetime, operator: Operator, user: User, da
     """
     _id = uuid4()
     consent = Consent(
-        id=_id,
+        id=str(_id),
         operator=operator,
         user=user,
         data=data,
@@ -25,7 +26,7 @@ def offer_consent(expiry_timestamp: datetime, operator: Operator, user: User, da
         state=ConsentState.offered,
     )
 
-    consents[_id] = consent
+    db.collection("consents").document(consent.id).set(consent.model_dump())
     return consent
 
 # POST endpoint to accept a consent
@@ -34,15 +35,20 @@ def accept_consent(consent_id: UUID, user: User):
     """
     User accepts an offered consent.
     """
-    if consent_id not in consents:
+    consent_ref = db.collection("consents").document(str(consent_id))
+    consent_doc = consent_ref.get()
+
+    if not consent_doc.exists:
         raise HTTPException(status_code=404, detail="Consent does not exist.")
 
-    consent = consents[consent_id]
+    consent_data = consent_doc.to_dict()
+    consent = Consent(**consent_data)
+
     if consent.user != user:
         raise HTTPException(status_code=400, detail="User does not match the consent's user")
 
     consent.state = ConsentState.accepted
-    consents[consent_id] = consent
+    consent_ref.set(consent.model_dump())
     return consent
 
 # POST endpoint to deny a consent
@@ -51,15 +57,20 @@ def deny_consent(consent_id: UUID, user: User):
     """
     User denies an offered consent.
     """
-    if consent_id not in consents:
+    consent_ref = db.collection("consents").document(str(consent_id))
+    consent_doc = consent_ref.get()
+
+    if not consent_doc.exists:
         raise HTTPException(status_code=404, detail="Consent does not exist.")
 
-    consent = consents[consent_id]
+    consent_data = consent_doc.to_dict()
+    consent = Consent(**consent_data)
+
     if consent.user != user:
         raise HTTPException(status_code=400, detail="User does not match the consent's user.")
 
     consent.state = ConsentState.denied
-    consents[consent_id] = consent
+    consent_ref.set(consent.model_dump())
     return consent
 
 # POST endpoint to revoke a consent
@@ -68,15 +79,20 @@ def revoke_consent(consent_id: UUID, user: User):
     """
     User revokes a consent, moving it from accepted to denied.
     """
-    if consent_id not in consents:
+    consent_ref = db.collection("consents").document(str(consent_id))
+    consent_doc = consent_ref.get()
+
+    if not consent_doc.exists:
         raise HTTPException(status_code=404, detail="Consent does not exist.")
 
-    consent = consents[consent_id]
-    if consent.user != user:
-        raise HTTPException(status_code=400, detail="User does not match the consent's user")
+    consent_data = consent_doc.to_dict()
+    consent = Consent(**consent_data)
 
-    consent.state = ConsentState.denied
-    consents[consent_id] = consent
+    if consent.user != user:
+        raise HTTPException(status_code=400, detail="User does not match the consent's user.")
+
+    consent.state = ConsentState.revoked
+    consent_ref.set(consent.model_dump())
     return consent
 
 # GET endpoint to get a consent by ID
@@ -85,8 +101,12 @@ def get_consent(consent_id: UUID):
     """
     Get a consent object by its ID.
     """
-    if consent_id in consents:
-        return consents[consent_id]
+    consent_ref = db.collection("consents").document(str(consent_id))
+    consent_doc = consent_ref.get()
+
+    if consent_doc.exists:
+        consent_data = consent_doc.to_dict()
+        return Consent(**consent_data)
 
     raise HTTPException(status_code=404, detail="Consent not found")
 
@@ -97,10 +117,11 @@ def list_user_consents(user_name: str):
     List all offered, accepted, and denied consents for a user.
     """
     user_consents = []
+    consents_ref = db.collection("consents")
+    query = consents_ref.where("user.name", "==", user_name)
 
-    # Check all consent states for the user
-    for consent in consents.values():
-        if consent.user.name == user_name:
-            user_consents.append(consent)
+    for consent_doc in query.stream():
+        consent_data = consent_doc.to_dict()
+        user_consents.append(Consent(**consent_data))
 
     return user_consents

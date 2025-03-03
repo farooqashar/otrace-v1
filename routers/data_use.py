@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException
 from datetime import datetime
 from uuid import UUID, uuid4
 from models.data_use_model import DataUse, Operator, DataSubject, Data, Operation, Basis
+from firebase import db
 
 router = APIRouter(prefix="/data_use", tags=["Data Use"])
 
@@ -15,7 +16,7 @@ def record_data_use(operator: Operator, data: Data, data_subject: DataSubject, o
     """
     data_use_id = uuid4()
     data_use = DataUse(
-        id=data_use_id,
+        id=str(data_use_id),
         operator=operator,
         data=data,
         data_subject=data_subject,
@@ -24,7 +25,7 @@ def record_data_use(operator: Operator, data: Data, data_subject: DataSubject, o
         timestamp=datetime.now(),
     )
 
-    data_uses[data_use_id] = data_use
+    db.collection("data_uses").document(data_use.id).set(data_use.model_dump())
     return data_use
 
 # GET endpoint to get the basis of a data use by ID
@@ -33,8 +34,12 @@ def get_basis(data_use_id: UUID):
     """
     Get the basis of the data use by ID.
     """
-    if data_use_id not in data_uses:
+    data_use_ref = db.collection("data_uses").document(str(data_use_id))
+    data_use_doc = data_use_ref.get()
+
+    if not data_use_doc.exists:
         raise HTTPException(status_code=404, detail="Data use not found")
 
-    data_use = data_uses[data_use_id]
-    return data_use.basis
+    data_use_data = data_use_doc.to_dict()
+
+    return data_use_data["basis"]

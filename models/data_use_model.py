@@ -1,6 +1,5 @@
-from typing import Any
+from typing import Any, Literal
 from pydantic import BaseModel
-from uuid import UUID
 from datetime import datetime
 from enum import Enum
 
@@ -26,10 +25,10 @@ class Data(BaseModel):
     description: str
 
 class Operation(BaseModel):
-    operation_type: str
+    operation_type: Literal["read", "write"]
 
 class DataUse(BaseModel):
-    id: UUID
+    id: str
     operator: Operator
     data: Data
     data_subject: DataSubject
