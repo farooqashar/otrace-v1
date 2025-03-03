@@ -5,8 +5,6 @@ from firebase import db
 
 router = APIRouter(prefix="/introduction", tags=["Introduction"])
 
-introductions = []
-
 @router.post("/introduce/")
 def introduce(intro: Introduction):
     intro_id = str(uuid4())

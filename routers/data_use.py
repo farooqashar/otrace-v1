@@ -6,8 +6,6 @@ from firebase import db
 
 router = APIRouter(prefix="/data_use", tags=["Data Use"])
 
-data_uses = {}
-
 # POST endpoint to record a data use
 @router.post("/use/", response_model=DataUse)
 def record_data_use(operator: Operator, data: Data, data_subject: DataSubject, operation: Operation, basis: Basis):

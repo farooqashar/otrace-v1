@@ -7,8 +7,6 @@ from firebase import db
 
 router = APIRouter(prefix="/consents", tags=["Consents"])
 
-consents = {}
-
 # POST endpoint to offer a consent
 @router.post("/offer/", response_model=Consent)
 def offer_consent(expiry_timestamp: datetime, operator: Operator, user: User, data: Data, operations: List[Operation]):

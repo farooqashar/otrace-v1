@@ -7,8 +7,6 @@ from firebase import db
 
 router = APIRouter(prefix="/attestations", tags=["Attestations"])
 
-attestation_records = {}
-
 # POST endpoint to create a new attestation
 @router.post("/attest/{party_name}/{data_controller}/", response_model=Attestation)
 def attest(party_name: str, data_controller: str, action: Action):
