@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Depends
 from auth import router as auth_router, get_current_user
-from routers import introduction, attestation, consent, data_use, data_subject_request
+from routers import introduction, attestation, consent, data_use, data_subject_request, trace
 
 app = FastAPI(
     title="Otrace API V1",
@@ -14,7 +14,7 @@ app.dependency_overrides[get_current_user] = get_current_user
 app.include_router(auth_router, prefix="/auth")
 
 # Secure routers
-for router in [introduction.router, attestation.router, consent.router, data_use.router, data_subject_request.router]:
+for router in [introduction.router, attestation.router, consent.router, data_use.router, data_subject_request.router, trace.router]:
     app.include_router(router, dependencies=[Depends(get_current_user)])
 
 @app.get("/")
