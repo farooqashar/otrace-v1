@@ -1,13 +1,21 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
+from auth import router as auth_router, get_current_user
 from routers import introduction, attestation, consent, data_use
 
-app = FastAPI(title="OTrace V1")
+app = FastAPI(
+    title="Otrace API V1",
+    swagger_ui_parameters={"persistAuthorization": True},
+)
 
-# Include Routers
-app.include_router(introduction.router)
-app.include_router(attestation.router)
-app.include_router(consent.router)
-app.include_router(data_use.router)
+# Apply authentication globally
+app.dependency_overrides[get_current_user] = get_current_user
+
+# Public routes
+app.include_router(auth_router, prefix="/auth")
+
+# Secure routers
+for router in [introduction.router, attestation.router, consent.router, data_use.router]:
+    app.include_router(router, dependencies=[Depends(get_current_user)])
 
 @app.get("/")
 def home():
