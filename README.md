@@ -9,7 +9,7 @@ In order to improve trust in the open banking ecosystem, the OTrace protocol pro
 
 ## Current OTrace Specification
 
-The current OTrace specification can be viewed [HERE](https://otrace-v1.onrender.com/redoc). This specification contains the different concepts embedded into the OTrace protocol, such as introduction, data use, consent, attestations, etc. The different schemas for various data objects are also present in this specification.
+The current OTrace specification can be viewed [HERE](https://otrace-v1.onrender.com/redoc). **Note that due to the budget constraints of the project at the moment, the specification and being able to use the OTrace API model via the public URL MAY NOT BE possible due to rate-limiting and shortened deployment resources. This means that you may see errors going to the OTrace specification or trying to use the API.** This specification contains the different concepts embedded into the OTrace protocol, such as introduction, data use, consent, attestations, etc. The different schemas for various data objects are also present in this specification.
 
 ## Tech Stack
 
