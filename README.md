@@ -28,7 +28,7 @@ The `auth.py` file has the logic for authentication for the API endpoints to be 
 
 ### Running Locally
 
-After cloning the repository, install the relevant required packages via `npm install`. After this, create a local `.env` file that has the credentials for the Firebase database and the credentials for the Mock Authorized User. The database credentials can be acquired by emailing ipri-contact@mit.edu. After this and `cd`-ing to the project directory, run the following command and go to the `localhost` url it spins the API on.
+After cloning the repository, install the relevant required packages via `pip install`. After this, create a local `.env` file that has the credentials for the Firebase database and the credentials for the Mock Authorized User. The database credentials can be acquired by emailing ipri-contact@mit.edu. After this and `cd`-ing to the project directory, run the following command and go to the `localhost` url it spins the API on.
 
 `
 py -m uvicorn main:app --reload
