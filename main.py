@@ -1,10 +1,19 @@
 from fastapi import FastAPI, Depends
+from fastapi.middleware.cors import CORSMiddleware
 from auth import router as auth_router, get_current_user
 from routers import introduction, attestation, consent, data_use, data_subject_request, trace, check
 
 app = FastAPI(
     title="Otrace API V1",
     swagger_ui_parameters={"persistAuthorization": True},
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Replace with specific origins in production
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # Apply authentication globally
