@@ -14,6 +14,7 @@ class Action_Type(str, Enum):
     data_subject_request_receive_request = "data subject request: receive"
     data_subject_request_update_request = "data subject request: update"
     data_use = "data use"
+    introduction = "introduction"
 
 class Action(BaseModel):
     type: Action_Type
